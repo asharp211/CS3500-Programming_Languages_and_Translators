@@ -1,0 +1,85 @@
+male(bart).
+male(homer).
+male(abe).
+male(herbert).
+male(krusty).
+male(orville).
+
+female(lisa).
+female(marge).
+female(maggie).
+female(selma).
+female(patty).
+female(ling).
+female(jacqueline). % marge's mom
+female(yuma).
+
+parent(homer, bart).
+parent(homer, maggie).
+parent(homer, lisa).
+parent(abe, homer).
+parent(abe, herbert).
+parent(orville, abe).
+parent(marge, bart).
+parent(marge, maggie).
+parent(marge, lisa).
+parent(selma, ling).
+parent(jacqueline, marge).
+parent(jacqueline, selma).
+parent(jacqueline, patty).
+parent(yuma, abe).
+
+father(X, Y):- male(X),
+parent(X, Y).
+
+mother(X, Y):- female(X),
+parent(X,Y).
+
+grandparent(X, Y):- parent(X, Z),
+parent(Z, Y).
+
+% Sister found from father%
+sister(X, Y):- female(X),
+father(X, Z),
+father(Z, Y),
+X \= Y.
+
+% Sister found from mother%
+sister(X, Y):- female(X),
+mother(X, Z),
+mother(Z, Y),
+X \= Y.
+
+% brother found from father%
+brother(X, Y):- male(X),
+father(X, Z),
+father(Z, Y),
+X \= Y.
+
+% brother found from mother%
+brother(X, Y):- male(X),
+mother(X, Z),
+mother(Z, Y),
+X \= Y.
+
+uncle(X, Y):- male(X), parent(Z, Y), brother(Z, X).
+
+aunt(X, Y):- female(X), parent(Z,Y), sister(Z, X).
+
+grandfather(X, Y):- male(X),
+parent(X, Z), parent(Z, Y).
+
+grandmother(X, Y):- female(X),
+parent(X, Z), parent(Z, Y).
+
+ancestor(X, Y):- parent(X, Y).
+ancestor(X, Y):- parent(X, Z), ancestor(Z, Y).
+
+descendant(X, Y):- ancestor(Y, X).
+
+males([]).
+males([H|T]):- male(H), males(T).
+
+lineage([]).
+lineage([H|T]):- lineage_P(H, T), lineage(T).
+lineage_P(X, [H|_T]) :- parent(H, X).
